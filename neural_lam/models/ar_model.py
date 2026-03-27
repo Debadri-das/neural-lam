@@ -122,6 +122,11 @@ class ARModel(pl.LightningModule):
         )
 
         # Instantiate loss function
+        if self.output_std and args.loss in ("wmse", "wmae"):
+            raise ValueError(
+                f"Loss '{args.loss}' is incompatible with output_std=True. "
+                "Use a metric that models variance (e.g. nll)."
+            )
         self.loss = metrics.get_metric(args.loss)
 
         boundary_mask = torch.tensor(
